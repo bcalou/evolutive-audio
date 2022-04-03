@@ -25,12 +25,12 @@ let interval;
 let started = false;
 
 progression.addEventListener('click', () => {
-  const progressionFactor = parseFloat(prompt('Progression du jeu entre 0 (début) et 1 (game over) ?'));
+  const progressionFactor = parseFloat(prompt('Progression du jeu entre 0 (début) et 1 (hors jeu) ?'));
   progressTo(progressionFactor);
 });
 
 hit.addEventListener('click', () => {
-  const progressionFactor = parseFloat(prompt('Progression du jeu entre 0 (début) et 1 (game over) ?'));
+  const progressionFactor = parseFloat(prompt('Progression du jeu entre 0 (début) et 1 (hors jeu) ?'));
   playHit();
 
   setTimeout(() => {
