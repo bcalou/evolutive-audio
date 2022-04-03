@@ -1,6 +1,9 @@
 console.log('ok');
 
 const audio = new Audio('audio.mp3');
+const over = new Audio('over.mp3');
+const menu = new Audio('menu.mp3');
+menu.volume = 0.1;
 
 const bpm = 128;
 const measuresPerCycle = 8;
@@ -19,31 +22,44 @@ let currentCycle = 0;
 
 let interval;
 
-start.addEventListener('click', () => {
-  audio.play();
-  refreshInterval();
+let started = false;
 
-  next.addEventListener('click', () => {
-    playHit();
-    goToNextCycle();
-  });
+progression.addEventListener('click', () => {
+  const progressionFactor = parseFloat(prompt('Progression du jeu entre 0 (début) et 1 (game over) ?'));
+  progressTo(progressionFactor);
 });
 
-function goToNextCycle() {
-  if (currentCycle === numberOfCycles - 1) {
+hit.addEventListener('click', () => {
+  const progressionFactor = parseFloat(prompt('Progression du jeu entre 0 (début) et 1 (game over) ?'));
+  playHit();
+
+  setTimeout(() => {
+    progressTo(progressionFactor);
+  }, 250);
+});
+
+game_over.addEventListener('click', () => {
+  audio.pause();
+  over.play();
+
+  setTimeout(() => {
+    progressTo(1);
+  }, 2500);
+});
+
+function goToCycle(cycle) {
+  if (cycle >= numberOfCycles) {
     return;
   }
 
-  currentCycle++;
+  currentCycle = cycle;
   console.log(`Now playing cycle ${currentCycle}`);
 
-  setTimeout(() => {
-    audio.currentTime = (cycleDurationInSeconds * currentCycle) + getPlayPositionInCycle();
-  }, 250);
+  audio.currentTime = (cycleDurationInSeconds * currentCycle) + getPlayPositionInCycle();
 }
 
 function playHit() {
-  currentMeasure = Math.ceil((getPlayPositionInCycle() / cycleDurationInSeconds) * chordsPerCycle);
+  currentMeasure = Math.ceil((getPlayPositionInCycle() / cycleDurationInSeconds) * chordsPerCycle) || 1;
   console.log(`Current measure is ${currentMeasure}`);
 
   const hit = hits[currentMeasure - 1].cloneNode();
@@ -61,14 +77,35 @@ function refreshInterval() {
   }
 
   interval = setInterval(() => {
-    currentCycle++;
+    if (currentCycle < currentCycle - 1) {
+      currentCycle++;
 
-    // When we reach the end
-    if (currentCycle === numberOfCycles) {
-      currentCycle = numberOfCycles - 2; // Return to the penultimate cycle to create an infinite loop
-      audio.currentTime = (cycleDurationInSeconds * currentCycle);
+      console.log(`Now playing cycle ${currentCycle}`);
     }
-
-    console.log(`Now playing cycle ${currentCycle}`);
   }, cycleDurationInSeconds * 1000);
 }
+
+function progressTo(progressionFactor) {
+  console.log('progress to', progressionFactor);
+
+  if (progressionFactor === 1) {
+    audio.pause();
+    menu.currentTime = 0;
+    menu.play();
+  } else {
+    if (audio.paused) {
+      console.log('set current time 0');
+      audio.currentTime = 0;
+      currentCycle = 0;
+      audio.play();
+      menu.pause();
+    }
+
+    const cycleMatchingProgression = Math.floor(numberOfCycles * progressionFactor);
+
+    if (cycleMatchingProgression > currentCycle) {
+      goToCycle(cycleMatchingProgression);
+    }
+  }
+}
+

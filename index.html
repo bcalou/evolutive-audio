@@ -8,7 +8,22 @@
   <script defer src="script.js"></script>
 </head>
 <body>
-  <button id="start">Start</button>
-  <button id="next">Hit! (next section)</button>
+  <ul>
+    <li>Set progression :
+      <ul>
+        <li>1 pour le hors-jeu (scores)</li>
+        <li>0 pour le début du jeu</li>
+        <li>Entre 0 et 0.999... pour la progression</li>
+      </ul>
+    </li>
+    <li>
+      Hit and set progression : jouer le son de hit et changer la progression
+    </li>
+    <li>Game over : joue un son de game over et met la progression à 1 après 2,5s.</li>
+  </ul>
+
+  <button id="progression">Set progression</button>
+  <button id="hit">Hit and set progression</button>
+  <button id="game_over">Game over</button>
 </body>
 </html>
