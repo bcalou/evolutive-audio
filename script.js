@@ -1,6 +1,6 @@
 console.log('ok');
 
-const audio = new Audio('audio.webm');
+const audio = new Audio('audio.mp3');
 const over = new Audio('over.mp3');
 const menu = new Audio('menu.mp3');
 menu.volume = 0.1;
